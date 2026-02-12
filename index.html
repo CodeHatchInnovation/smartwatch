@@ -3,269 +3,304 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smartwatch Pro Max</title>
+<title>Smartwatch Ultimate UI</title>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-  .watch {
-    width: 360px;
-    height: 360px;
-    border-radius: 50%;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s ease;
-  }
+body{
+  background: radial-gradient(circle at center,#0f172a,#000);
+  font-family: system-ui, -apple-system, sans-serif;
+}
 
-  .screen {
-    transition: all 0.4s ease;
-  }
+/* WATCH BODY */
+.watch{
+  width:420px;
+  height:420px;
+  border-radius:50%;
+  background:#000;
+  position:relative;
+  overflow:hidden;
+  box-shadow:
+    inset 0 0 40px rgba(255,255,255,0.04),
+    0 0 100px rgba(0,0,0,0.9);
+  transition:0.4s ease;
+}
 
-  .hidden-screen {
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0.9);
-  }
+/* STATUS */
+.status{
+  position:absolute;
+  top:12px;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  padding:0 50px;
+  font-size:12px;
+}
 
-  .active-screen {
-    opacity: 1;
-    transform: scale(1);
-  }
+/* SCREENS */
+.screen{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  transition:0.4s ease;
+}
 
-  .glass {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-  }
+.hidden{
+  opacity:0;
+  transform:scale(0.85);
+  pointer-events:none;
+}
+
+.active{
+  opacity:1;
+  transform:scale(1);
+}
+
+/* CLOCK HANDS */
+.hand{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform-origin:bottom;
+}
+
+.hour{width:4px;height:70px;background:white;}
+.minute{width:3px;height:100px;background:white;}
+.second{width:2px;height:110px;background:#22c55e;}
+
+/* APP ICON */
+.app{
+  width:70px;
+  height:70px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,0.07);
+  backdrop-filter:blur(10px);
+  font-size:24px;
+  transition:0.3s;
+}
+
+.app:hover{transform:scale(1.15);}
+
+/* RINGS */
+svg{position:absolute;}
+
+/* SIDE BUTTON */
+.side-btn{
+  position:absolute;
+  right:-18px;
+  top:160px;
+  width:16px;
+  height:90px;
+  background:#333;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+/* DIGITAL CROWN */
+.crown{
+  position:absolute;
+  right:-25px;
+  top:270px;
+  width:22px;
+  height:22px;
+  background:#555;
+  border-radius:50%;
+}
+
+/* ALWAYS ON */
+.always{
+  filter:brightness(0.25);
+}
 </style>
 </head>
 
-<body class="bg-gradient-to-br from-gray-900 via-black to-gray-800 flex items-center justify-center h-screen">
+<body class="flex items-center justify-center h-screen text-white">
 
-<div id="watch" class="watch bg-black text-white border-8 border-gray-700 shadow-2xl">
+<div class="watch" id="watch">
+
+<div class="side-btn" onclick="openApps()"></div>
+<div class="crown" onwheel="scrollApps(event)"></div>
 
 <!-- STATUS BAR -->
-<div class="absolute top-3 w-full flex justify-between px-8 text-xs">
-  <span id="batteryStatus">🔋100%</span>
-  <span id="wifi">📶</span>
-  <span id="bell">🔔</span>
+<div class="status">
+  <span id="batteryIcon">🔋100%</span>
+  <span>📶 BT GPS</span>
+  <span id="silentIcon">🔔</span>
 </div>
 
-<!-- HOME -->
-<div id="home" class="screen active-screen absolute inset-0 flex flex-col items-center justify-center">
+<!-- HOME FACE -->
+<div id="home" class="screen active">
 
-  <div id="clock" class="text-6xl font-bold tracking-wider"></div>
-  <div id="date" class="text-sm text-gray-400"></div>
+<!-- ACTIVITY RINGS -->
+<svg width="260" height="260" class="-rotate-90">
+  <circle cx="130" cy="130" r="110" stroke="#111" stroke-width="8" fill="none"/>
+  <circle id="moveRing" cx="130" cy="130" r="110"
+    stroke="#22c55e" stroke-width="8"
+    fill="none" stroke-dasharray="691"
+    stroke-dashoffset="691"
+    stroke-linecap="round"/>
 
-  <div class="mt-3 text-blue-400">
-    👟 <span id="steps">0</span>
-  </div>
+  <circle cx="130" cy="130" r="90" stroke="#111" stroke-width="8" fill="none"/>
+  <circle id="exerciseRing" cx="130" cy="130" r="90"
+    stroke="#3b82f6" stroke-width="8"
+    fill="none" stroke-dasharray="565"
+    stroke-dashoffset="565"
+    stroke-linecap="round"/>
 
-  <button onclick="openScreen('apps')" 
-  class="absolute bottom-6 text-xs bg-white/10 px-4 py-1 rounded-full glass">
-  Apps
-  </button>
+  <circle cx="130" cy="130" r="70" stroke="#111" stroke-width="8" fill="none"/>
+  <circle id="standRing" cx="130" cy="130" r="70"
+    stroke="#f97316" stroke-width="8"
+    fill="none" stroke-dasharray="439"
+    stroke-dashoffset="439"
+    stroke-linecap="round"/>
+</svg>
+
+<!-- ANALOG -->
+<div class="hand hour" id="hour"></div>
+<div class="hand minute" id="minute"></div>
+<div class="hand second" id="second"></div>
+
+<!-- DIGITAL -->
+<div class="text-6xl font-bold tracking-widest mt-24" id="digitalTime"></div>
+<div class="text-sm text-gray-400" id="date"></div>
+
+<div class="mt-3 text-sm text-blue-400">👟 <span id="steps">0</span></div>
+<div class="text-sm text-red-400">❤️ <span id="bpm">80</span> BPM</div>
+<div class="text-sm text-yellow-400">☀ 25°C</div>
 
 </div>
 
-<!-- APPS GRID -->
-<div id="apps" class="screen hidden-screen absolute inset-0 flex flex-col items-center justify-center">
+<!-- APPS -->
+<div id="apps" class="screen hidden overflow-y-auto">
 
-  <h2 class="mb-4 text-purple-400">Aplicaciones</h2>
-
-  <div class="grid grid-cols-3 gap-6 text-2xl">
-    <button onclick="openScreen('heart')">❤️</button>
-    <button onclick="openScreen('activity')">👟</button>
-    <button onclick="openScreen('music')">🎵</button>
-    <button onclick="openScreen('weather')">☀️</button>
-    <button onclick="openScreen('stopwatch')">⏱</button>
-    <button onclick="openScreen('compass')">🧭</button>
-    <button onclick="openScreen('batteryApp')">🔋</button>
-    <button onclick="toggleTheme()">🌙</button>
-    <button onclick="sendNotification()">📩</button>
-  </div>
-
-  <button onclick="openScreen('home')" 
-  class="absolute bottom-6 text-xs bg-white/10 px-4 py-1 rounded-full glass">
-  Volver
-  </button>
-
+<div class="grid grid-cols-3 gap-6 mt-10">
+  <div class="app">❤️</div>
+  <div class="app">🎵</div>
+  <div class="app">📩</div>
+  <div class="app">📞</div>
+  <div class="app">🏃</div>
+  <div class="app">🧭</div>
+  <div class="app">⚙</div>
+  <div class="app" onclick="toggleSilent()">🔕</div>
+  <div class="app" onclick="toggleTheme()">🌗</div>
+  <div class="app" onclick="toggleAlways()">💤</div>
 </div>
 
-<!-- HEART -->
-<div id="heart" class="screen hidden-screen absolute inset-0 flex flex-col items-center justify-center">
-  <div class="text-red-500 text-5xl" id="heartRate">80</div>
-  <div class="text-gray-400">BPM</div>
-  <button onclick="openScreen('apps')" class="absolute bottom-6 text-xs bg-white/10 px-4 py-1 rounded-full glass">Volver</button>
-</div>
+<button onclick="openHome()" class="mt-6 mb-10 text-xs bg-white/10 px-4 py-1 rounded-full">
+Volver
+</button>
 
-<!-- ACTIVITY -->
-<div id="activity" class="screen hidden-screen absolute inset-0 flex flex-col items-center justify-center">
-  <svg width="160" height="160" class="-rotate-90">
-    <circle cx="80" cy="80" r="70" stroke="#1f2937" stroke-width="10" fill="none"/>
-    <circle id="ring" cx="80" cy="80" r="70"
-      stroke="#22c55e" stroke-width="10"
-      fill="none" stroke-dasharray="440"
-      stroke-dashoffset="440"
-      stroke-linecap="round"/>
-  </svg>
-  <div class="mt-3">👟 <span id="stepsActivity">0</span></div>
-  <button onclick="openScreen('apps')" class="absolute bottom-6 text-xs bg-white/10 px-4 py-1 rounded-full glass">Volver</button>
-</div>
-
-<!-- MUSIC -->
-<div id="music" class="screen hidden-screen absolute inset-0 flex flex-col items-center justify-center">
-  <div class="text-3xl">🎵</div>
-  <div id="song" class="mt-2 text-sm">Track 01</div>
-  <button onclick="nextSong()" class="mt-3 bg-purple-500 px-4 py-1 rounded-lg text-sm">Siguiente</button>
-  <button onclick="openScreen('apps')" class="absolute bottom-6 text-xs bg-white/10 px-4 py-1 rounded-full glass">Volver</button>
-</div>
-
-<!-- WEATHER -->
-<div id="weather" class="screen hidden-screen absolute inset-0 flex flex-col items-center justify-center">
-  <div class="text-5xl">☀️</div>
-  <div class="text-xl mt-2">26°C</div>
-  <button onclick="openScreen('apps')" class="absolute bottom-6 text-xs bg-white/10 px-4 py-1 rounded-full glass">Volver</button>
-</div>
-
-<!-- STOPWATCH -->
-<div id="stopwatch" class="screen hidden-screen absolute inset-0 flex flex-col items-center justify-center">
-  <div id="timer" class="text-4xl">00:00</div>
-  <div class="flex gap-3 mt-3">
-    <button onclick="startTimer()" class="bg-green-500 px-3 py-1 rounded text-sm">Start</button>
-    <button onclick="resetTimer()" class="bg-red-500 px-3 py-1 rounded text-sm">Reset</button>
-  </div>
-  <button onclick="openScreen('apps')" class="absolute bottom-6 text-xs bg-white/10 px-4 py-1 rounded-full glass">Volver</button>
-</div>
-
-<!-- COMPASS -->
-<div id="compass" class="screen hidden-screen absolute inset-0 flex flex-col items-center justify-center">
-  <div id="needle" class="text-6xl transition-transform duration-500">🧭</div>
-  <button onclick="rotateCompass()" class="mt-3 bg-blue-500 px-3 py-1 rounded text-sm">Girar</button>
-  <button onclick="openScreen('apps')" class="absolute bottom-6 text-xs bg-white/10 px-4 py-1 rounded-full glass">Volver</button>
-</div>
-
-<!-- BATTERY -->
-<div id="batteryApp" class="screen hidden-screen absolute inset-0 flex flex-col items-center justify-center">
-  <div id="batteryBig" class="text-5xl">100%</div>
-  <button onclick="chargeBattery()" class="mt-3 bg-blue-500 px-3 py-1 rounded text-sm">Cargar</button>
-  <button onclick="openScreen('apps')" class="absolute bottom-6 text-xs bg-white/10 px-4 py-1 rounded-full glass">Volver</button>
 </div>
 
 </div>
 
 <script>
-/* NAVIGATION */
-function openScreen(id){
-  document.querySelectorAll(".screen").forEach(s=>{
-    s.classList.remove("active-screen");
-    s.classList.add("hidden-screen");
-  });
-  document.getElementById(id).classList.remove("hidden-screen");
-  document.getElementById(id).classList.add("active-screen");
-  if(navigator.vibrate) navigator.vibrate(40);
-}
 
 /* CLOCK */
 function updateClock(){
   const now=new Date();
-  document.getElementById("clock").textContent=
+  const h=now.getHours()%12;
+  const m=now.getMinutes();
+  const s=now.getSeconds();
+
+  hour.style.transform=`translate(-50%,-100%) rotate(${h*30+m/2}deg)`;
+  minute.style.transform=`translate(-50%,-100%) rotate(${m*6}deg)`;
+  second.style.transform=`translate(-50%,-100%) rotate(${s*6}deg)`;
+
+  digitalTime.textContent=
     now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById("date").textContent=
-    now.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'short'});
+  date.textContent=
+    now.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
 }
 setInterval(updateClock,1000);
 updateClock();
 
 /* HEART */
 setInterval(()=>{
-  document.getElementById("heartRate").textContent=
-    70+Math.floor(Math.random()*25);
+  bpm.textContent=70+Math.floor(Math.random()*25);
 },3000);
 
-/* STEPS */
-let steps=0;
-let lastMove=0;
+/* STEPS + RINGS */
+let steps=0,last=0;
 function motion(e){
-  let acc=e.accelerationIncludingGravity;
-  if(!acc) return;
-  let mag=Math.sqrt(acc.x*acc.x+acc.y*acc.y+acc.z*acc.z);
-  if(mag>15 && Date.now()-lastMove>500){
+  let a=e.accelerationIncludingGravity;
+  if(!a)return;
+  let mag=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+  if(mag>15 && Date.now()-last>500){
     steps++;
     document.getElementById("steps").textContent=steps;
-    document.getElementById("stepsActivity").textContent=steps;
-    updateRing();
-    lastMove=Date.now();
+    updateRings();
+    last=Date.now();
   }
 }
 if(typeof DeviceMotionEvent!=="undefined"){
   window.addEventListener("devicemotion",motion);
 }
-function updateRing(){
-  let percent=Math.min(steps/10000,1);
-  document.getElementById("ring").style.strokeDashoffset=440-(440*percent);
-}
 
-/* MUSIC */
-let song=1;
-function nextSong(){
-  song++;
-  document.getElementById("song").textContent="Track 0"+song;
-}
+function updateRings(){
+  let move=Math.min(steps/10000,1);
+  let exercise=Math.min(steps/5000,1);
+  let stand=Math.min(steps/3000,1);
 
-/* STOPWATCH */
-let timerInterval,seconds=0;
-function startTimer(){
-  if(timerInterval) return;
-  timerInterval=setInterval(()=>{
-    seconds++;
-    let m=Math.floor(seconds/60).toString().padStart(2,'0');
-    let s=(seconds%60).toString().padStart(2,'0');
-    document.getElementById("timer").textContent=`${m}:${s}`;
-  },1000);
-}
-function resetTimer(){
-  clearInterval(timerInterval);
-  timerInterval=null;
-  seconds=0;
-  document.getElementById("timer").textContent="00:00";
-}
-
-/* COMPASS */
-let deg=0;
-function rotateCompass(){
-  deg+=45;
-  document.getElementById("needle").style.transform=`rotate(${deg}deg)`;
+  moveRing.style.strokeDashoffset=691-(691*move);
+  exerciseRing.style.strokeDashoffset=565-(565*exercise);
+  standRing.style.strokeDashoffset=439-(439*stand);
 }
 
 /* BATTERY */
 let battery=100;
-function chargeBattery(){
-  battery=100;
-}
 setInterval(()=>{
-  if(battery>0) battery--;
-  document.getElementById("batteryStatus").textContent="🔋"+battery+"%";
-  document.getElementById("batteryBig").textContent=battery+"%";
-},30000);
+  if(battery>0)battery--;
+  batteryIcon.textContent="🔋"+battery+"%";
+},60000);
+
+/* NAVIGATION */
+function openApps(){
+  home.classList.add("hidden");
+  home.classList.remove("active");
+  apps.classList.remove("hidden");
+  apps.classList.add("active");
+  if(navigator.vibrate)navigator.vibrate(40);
+}
+
+function openHome(){
+  apps.classList.add("hidden");
+  apps.classList.remove("active");
+  home.classList.remove("hidden");
+  home.classList.add("active");
+}
+
+/* CROWN SCROLL */
+function scrollApps(e){
+  if(!apps.classList.contains("active")) return;
+  apps.scrollTop+=e.deltaY;
+}
+
+/* SILENT */
+function toggleSilent(){
+  silentIcon.textContent=
+    silentIcon.textContent==="🔔"?"🔕":"🔔";
+}
 
 /* THEME */
-let dark=true;
 function toggleTheme(){
-  dark=!dark;
-  const w=document.getElementById("watch");
-  if(dark){
-    w.classList.remove("bg-white","text-black");
-    w.classList.add("bg-black","text-white");
-  }else{
-    w.classList.remove("bg-black","text-white");
-    w.classList.add("bg-white","text-black");
-  }
+  watch.classList.toggle("bg-white");
+  watch.classList.toggle("bg-black");
+  watch.classList.toggle("text-black");
+  watch.classList.toggle("text-white");
 }
 
-/* NOTIFICATION */
-function sendNotification(){
-  alert("Nueva notificación 📩");
-  if(navigator.vibrate) navigator.vibrate([100,50,100]);
+/* ALWAYS ON */
+function toggleAlways(){
+  watch.classList.toggle("always");
 }
+
 </script>
 
 </body>
