@@ -8,103 +8,88 @@
 </head>
 <body>
 
-    <main class="watch-container">
-        
-        <div class="watch-case">
-            
-            <div id="screen" class="screen">
-                
-                <div id="sleep-overlay" class="sleep-overlay hidden"></div>
+<main class="watch-container">
+    <div class="watch-case">
+        <div id="screen" class="screen">
 
-                <section id="home-screen" class="page active">
-                    <div class="top-info">
-                        <span class="day-date">LUN 12</span>
-                    </div>
-                    <div class="time-display">
-                        <span id="hours">10</span>
-                        <span class="colon">:</span>
-                        <span id="minutes">45</span>
-                    </div>
-                    <div class="bottom-info">
-                        <div class="health-pill">
-                            <span>🔥 340 kcal</span>
-                        </div>
-                    </div>
-                    <div class="tap-hint">Toca para Menú</div>
-                </section>
+            <div id="sleep-overlay" class="sleep-overlay"></div>
 
-                <section id="menu-screen" class="page">
-                    <div class="app-grid">
-                        <div class="app-icon heart-icon" data-target="app-heart">❤️</div>
-                        <div class="app-icon music-icon" data-target="app-music">🎵</div>
-                        <div class="app-icon weather-icon" data-target="app-weather">☀</div>
-                        <div class="app-icon steps-icon" data-target="app-steps">👟</div>
-                        <div class="app-icon battery-icon" data-target="app-battery">🔋</div>
-                        <div class="app-icon settings-icon" data-target="app-settings">⚙️</div>
-                    </div>
-                </section>
+            <!-- HOME -->
+            <section id="home-screen" class="page active">
+                <div class="top-info">
+                    <span class="day-date">jue 12/02/2026</span>
+                </div>
+                <div class="time-display">
+                    <span id="hours">10</span>
+                    <span class="colon">:</span>
+                    <span id="minutes">45</span>
+                </div>
+                <div class="tap-hint">toca para menú</div>
+            </section>
 
-                <section id="app-heart" class="page app-detail">
-                    <div class="heart-animation">❤️</div>
-                    <div class="bpm-value"><span id="bpm">72</span> BPM</div>
-                    <div class="graph-line"></div>
-                    <p class="status-text">Midiendo...</p>
-                </section>
+            <!-- MENU -->
+            <section id="menu-screen" class="page">
+                <div class="app-grid">
+                    <div class="app-icon heart-icon" data-target="app-heart">❤️</div>
+                    <div class="app-icon music-icon" data-target="app-music">🎵</div>
+                    <div class="app-icon weather-icon" data-target="app-weather">☀</div>
+                    <div class="app-icon steps-icon" data-target="app-steps">👟</div>
+                    <div class="app-icon battery-icon" data-target="app-battery">🔋</div>
+                    <div class="app-icon settings-icon" data-target="app-settings">⚙️</div>
 
-                <section id="app-music" class="page app-detail">
-                    <div class="album-art">🎵</div>
-                    <h3 class="song-title">Midnight City</h3>
-                    <p class="artist-name">M83</p>
-                    <div class="progress-container">
-                        <div class="progress-bar"></div>
-                    </div>
-                    <div class="music-controls">⏮ ⏯ ⏭</div>
-                </section>
+                    <!-- NUEVOS -->
+                    <div class="app-icon bt-icon">📶</div>
+                    <div class="app-icon wifi-icon">📡</div>
+                    <div class="app-icon dnd-icon">🔕</div>
+                    <div class="app-icon gps-icon">📍</div>
+                </div>
+            </section>
 
-                <section id="app-weather" class="page app-detail">
-                    <div class="sun-animation">☀</div>
-                    <div class="temp-value">24°</div>
-                    <p class="city-name">Ciudad de México</p>
-                    <div class="weather-meta">H: 45% | V: 12km/h</div>
-                </section>
+            <!-- APPS -->
+            <section id="app-heart" class="page app-detail">
+                <div class="heart-animation">❤️</div>
+                <div class="bpm-value"><span id="bpm">72</span> BPM</div>
+            </section>
 
-                <section id="app-steps" class="page app-detail">
-                    <div class="steps-ring">
-                        <div class="steps-value" id="steps-counter">0</div>
-                    </div>
-                    <p class="steps-label">Pasos hoy</p>
-                </section>
+            <section id="app-music" class="page app-detail">
+                <h3>Midnight City</h3>
+                <p>M83</p>
+            </section>
 
-                <section id="app-battery" class="page app-detail">
-                    <div class="battery-visual">
-                        <div class="battery-level"></div>
-                    </div>
-                    <h2 class="battery-percent">85%</h2>
-                    <p>Uso normal</p>
-                </section>
+            <section id="app-weather" class="page app-detail">
+                <div class="sun-animation">☀</div>
+                <div class="temp-value">24°</div>
+                <p>Ciudad de México</p>
+            </section>
 
-                <section id="app-settings" class="page app-detail">
-                    <h3>Ajustes</h3>
-                    <ul class="settings-list">
-                        <li>Brillo</li>
-                        <li>Sonido</li>
-                        <li>Bluetooth: ON</li>
-                        <li>Sistema</li>
-                    </ul>
-                </section>
+            <section id="app-steps" class="page app-detail">
+                <div class="steps-ring">
+                    <div id="steps-counter" class="steps-value">0</div>
+                </div>
+                <p>pasos hoy</p>
+            </section>
 
-                <div id="back-btn" class="back-btn hidden">‹</div>
+            <section id="app-battery" class="page app-detail">
+                <div class="battery-visual">
+                    <div class="battery-level"></div>
+                </div>
+                <h2 class="battery-percent">85%</h2>
+            </section>
 
-            </div>
+            <section id="app-settings" class="page app-detail">
+                <h3>ajustes</h3>
+            </section>
 
-            <div id="side-button" class="side-button"></div>
+            <div id="back-btn" class="back-btn hidden">‹</div>
         </div>
-        
-        <div class="strap top-strap"></div>
-        <div class="strap bottom-strap"></div>
 
-    </main>
+        <div id="side-button" class="side-button"></div>
+    </div>
 
-    <script src="script.js"></script>
+    <div class="strap top-strap"></div>
+    <div class="strap bottom-strap"></div>
+</main>
+
+<script src="script.js"></script>
 </body>
 </html>
