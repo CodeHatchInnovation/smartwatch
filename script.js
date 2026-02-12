@@ -1,3 +1,10 @@
+const watch = document.getElementById("watch");
+const screens = document.querySelectorAll(".screen");
+
+let currentScreen = "home";
+let startY = 0;
+let steps = 0;
+
 // ======= RELOJ =======
 function updateTime(){
   const now = new Date();
@@ -11,60 +18,98 @@ updateTime();
 
 // ======= NAVEGACIÓN =======
 function showScreen(id){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  screens.forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
+  currentScreen=id;
 }
 
-function openMenu(){ showScreen("menu"); }
-function goHome(){ showScreen("home"); }
-function goMenu(){ showScreen("menu"); }
-function openApp(id){ showScreen(id); }
+// Swipe vertical
+watch.addEventListener("touchstart",(e)=>{
+  startY = e.touches[0].clientY;
+});
 
-// ======= RITMO CARDIACO DINÁMICO =======
-setInterval(()=>{
-  const bpm = Math.floor(Math.random()*30)+60;
-  document.getElementById("heartRate").innerText=bpm;
-  document.getElementById("heartAppRate").innerText=bpm+" BPM";
-},2000);
+watch.addEventListener("touchend",(e)=>{
+  let diff = startY - e.changedTouches[0].clientY;
 
-// ======= PASOS SIMULADOS =======
-let steps=3240;
-setInterval(()=>{
-  steps+=Math.floor(Math.random()*10);
-  document.getElementById("stepsCount").innerText=steps;
-  document.getElementById("stepsAppCount").innerText=steps;
-},3000);
+  if(diff > 50 && currentScreen==="home"){
+      showScreen("menu");
+  }
 
-// ======= ACTIVIDAD RING =======
-let progress=150;
-setInterval(()=>{
-  progress-=10;
-  if(progress<=0) progress=377;
-  document.getElementById("activityRing").style.strokeDashoffset=progress;
-},2000);
+  if(diff < -50 && currentScreen==="menu"){
+      showScreen("home");
+  }
+});
+
+// Doble click alternativa
+watch.addEventListener("dblclick",()=>{
+  if(currentScreen==="home") showScreen("menu");
+  else if(currentScreen==="menu") showScreen("home");
+});
+
+// ======= ABRIR APP =======
+function openApp(name){
+  const container = document.getElementById("appContainer");
+  container.innerHTML = "<button class='back-btn' onclick='closeApp()'>⬅</button>";
+  showScreen("appContainer");
+
+  if(name==="heart"){
+    container.innerHTML += "<h2>❤️ Ritmo Cardíaco</h2><div id='bpm'></div>";
+    setInterval(()=>{
+      document.getElementById("bpm").innerText =
+        Math.floor(Math.random()*30+60)+" BPM";
+    },2000);
+  }
+
+  if(name==="steps"){
+    container.innerHTML += "<h2>👟 Pasos</h2><div id='stepsApp'></div>";
+    setInterval(()=>{
+      steps += Math.floor(Math.random()*10);
+      document.getElementById("stepsApp").innerText = steps;
+    },2000);
+  }
+
+  if(name==="weather"){
+    container.innerHTML += "<h2>☀️ 26°C</h2><div>Soleado</div>";
+  }
+
+  if(name==="music"){
+    container.innerHTML += "<h2>🎵 Now Playing</h2><div>Blinding Lights</div>";
+  }
+
+  if(name==="stopwatch"){
+    container.innerHTML += "<h2>⏱ Cronómetro</h2><div>00:00</div>";
+  }
+
+  if(name==="timer"){
+    container.innerHTML += "<h2>⏲ Temporizador</h2><div>5:00</div>";
+  }
+
+  if(name==="gps"){
+    container.innerHTML += "<h2>🧭 GPS Activo</h2>";
+  }
+}
+
+function closeApp(){
+  showScreen("menu");
+}
+
+// ======= LLAMADA =======
+function simulateCall(){
+  alert("📞 Llamada entrante...");
+  if(navigator.vibrate) navigator.vibrate([200,100,200]);
+}
 
 // ======= MODO DIA/NOCHE =======
 let dark=true;
 function toggleMode(){
   dark=!dark;
   const root=document.documentElement;
+
   if(dark){
     root.style.setProperty('--bg','#000');
     root.style.setProperty('--text','#fff');
-    root.style.setProperty('--accent','#00f2fe');
-    document.getElementById("modeIcon").innerText="🌙";
   }else{
     root.style.setProperty('--bg','#f1f5f9');
     root.style.setProperty('--text','#000');
-    root.style.setProperty('--accent','#2563eb');
-    document.getElementById("modeIcon").innerText="☀️";
-  }
-}
-
-// ======= NOTIFICACIÓN =======
-function simulateNotification(){
-  alert("Nueva notificación 📩");
-  if(navigator.vibrate){
-    navigator.vibrate(200);
   }
 }
