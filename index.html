@@ -3,41 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smartwatch Ultra Clean</title>
+<title>Smartwatch Pro</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div class="watch" id="watch">
 
-  <!-- HOME (solo reloj) -->
-  <div id="home" class="screen active center">
-      <div class="time" id="time"></div>
-      <div class="date" id="date"></div>
-      <div class="hint">Desliza ↑ para apps</div>
+  <!-- HOME -->
+  <div class="screen active" id="home">
+    <div class="time" id="time"></div>
+    <div class="date" id="date"></div>
   </div>
 
-  <!-- MENU DE APPS -->
-  <div id="menu" class="screen">
-      <div class="menu-header">
-          <span>Apps</span>
-      </div>
-
-      <div class="grid">
-          <div class="app-icon" onclick="openApp('heart')">❤️</div>
-          <div class="app-icon" onclick="openApp('steps')">👟</div>
-          <div class="app-icon" onclick="openApp('weather')">☁️</div>
-          <div class="app-icon" onclick="openApp('music')">🎵</div>
-          <div class="app-icon" onclick="openApp('stopwatch')">⏱</div>
-          <div class="app-icon" onclick="openApp('timer')">⏲</div>
-          <div class="app-icon" onclick="openApp('gps')">🧭</div>
-          <div class="app-icon" onclick="simulateCall()">📞</div>
-          <div class="app-icon" onclick="toggleMode()">⚙️</div>
-      </div>
+  <!-- MENU -->
+  <div class="screen" id="menu">
+    <div class="grid">
+      <div class="app-icon" onclick="openApp('heart')">❤️</div>
+      <div class="app-icon" onclick="openApp('music')">🎵</div>
+      <div class="app-icon" onclick="openApp('weather')">☀️</div>
+      <div class="app-icon" onclick="openApp('steps')">👟</div>
+      <div class="app-icon" onclick="openApp('battery')">🔋</div>
+      <div class="app-icon" onclick="openApp('settings')">⚙️</div>
+    </div>
   </div>
 
-  <!-- CONTENEDOR DE APP ACTIVA -->
-  <div id="appContainer" class="screen center"></div>
+  <!-- APP CONTAINER -->
+  <div class="screen" id="appContainer"></div>
 
 </div>
 
