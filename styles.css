@@ -1,24 +1,34 @@
 :root {
     --bg-color: #121212;
-    --screen-bg: #000;
+    --screen-bg: #000000;
     --accent-color: #00f2ff;
-    --text-primary: #fff;
+    --text-primary: #ffffff;
+    --glass: rgba(255, 255, 255, 0.1);
 }
 
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: sans-serif;
-    user-select: none;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    user-select: none; /* Evita selección de texto al tocar */
 }
 
 body {
-    background: var(--bg-color);
+    background-color: var(--bg-color);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
+}
+
+/* --- Carcasa y Correas --- */
+.watch-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .watch-case {
@@ -26,33 +36,76 @@ body {
     height: 320px;
     background: #1a1a1a;
     border-radius: 50%;
+    position: relative;
+    box-shadow: 
+        inset 0 0 20px rgba(0,0,0,0.8),
+        0 20px 50px rgba(0,0,0,0.5);
+    border: 6px solid #333;
+    z-index: 10;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
 }
 
+.strap {
+    width: 140px;
+    height: 150px;
+    background: linear-gradient(to bottom, #222, #111);
+    position: absolute;
+    border-radius: 20px;
+    z-index: 1;
+}
+
+.top-strap { top: -80px; }
+.bottom-strap { bottom: -80px; }
+
+.side-button {
+    position: absolute;
+    right: -12px;
+    width: 12px;
+    height: 50px;
+    background: #444;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.side-button:active { transform: scale(0.95) translateX(-2px); }
+
+/* --- Pantalla --- */
 .screen {
     width: 300px;
     height: 300px;
-    background: var(--screen-bg);
+    background-color: var(--screen-bg);
     border-radius: 50%;
-    color: white;
     position: relative;
-    overflow: hidden;
+    overflow: hidden; /* Máscara circular */
+    color: var(--text-primary);
 }
 
+/* Capa de apagado */
+.sleep-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: black;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 1s ease;
+    pointer-events: none;
+}
+.sleep-overlay.active { opacity: 1; pointer-events: all; }
+
+/* Páginas */
 .page {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     opacity: 0;
     transform: scale(0.8);
-    transition: .3s;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     pointer-events: none;
 }
 
@@ -62,89 +115,98 @@ body {
     pointer-events: all;
 }
 
+/* --- Home --- */
 .time-display {
     font-size: 4rem;
+    font-weight: 200;
+    background: linear-gradient(to bottom, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
+.day-date { color: var(--accent-color); text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem;}
+.tap-hint { font-size: 0.7rem; color: #555; margin-top: 20px; animation: pulse 2s infinite;}
 
-.tap-hint {
-    font-size: .7rem;
-    color: #555;
-}
-
+/* --- Menú Grid --- */
 .app-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
+    padding: 40px;
 }
 
 .app-icon {
-    width: 50px;
-    height: 50px;
+    width: 50px; height: 50px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 1.5rem;
     cursor: pointer;
+    transition: transform 0.2s;
+    backdrop-filter: blur(5px);
     background: rgba(255,255,255,0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
-.app-icon.active {
-    box-shadow: 0 0 15px var(--accent-color);
-}
+.app-icon:hover { transform: scale(1.15); }
 
-.heart-icon { background: #ff4b2b; }
-.music-icon { background: #1d976c; }
-.weather-icon { background: gold; }
-.steps-icon { background: #3a7bd5; }
-.battery-icon { background: #38ef7d; }
-.settings-icon { background: #333; }
+/* Colores de Apps */
+.heart-icon { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+.music-icon { background: linear-gradient(135deg, #1d976c, #93f9b9); }
+.weather-icon { background: linear-gradient(135deg, #ffb75e, #ed8f03); }
+.steps-icon { background: linear-gradient(135deg, #3a7bd5, #3a6073); }
+.battery-icon { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.settings-icon { background: linear-gradient(135deg, #434343, #000000); border: 1px solid #333;}
 
-.bt-icon { background: #00d2ff; }
-.wifi-icon { background: #0072ff; }
-.dnd-icon { background: #ff416c; }
-.gps-icon { background: #11998e; }
-
+/* --- Apps UI --- */
 .back-btn {
     position: absolute;
-    left: 15px;
+    left: 20px; top: 50%;
+    transform: translateY(-50%);
     font-size: 2rem;
     cursor: pointer;
+    color: #888;
+    z-index: 50;
+    padding: 10px;
 }
-
 .back-btn.hidden { display: none; }
 
-.sleep-overlay {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: black;
-    opacity: 0;
-    transition: 1s;
-    pointer-events: none;
+/* Ritmo Cardíaco */
+.heart-animation { font-size: 4rem; animation: heartbeat 1s infinite; color: #ff4b2b; }
+.bpm-value { font-size: 2rem; font-weight: bold; margin-top: 10px; }
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    15% { transform: scale(1.3); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.15); }
+    60% { transform: scale(1); }
 }
 
-.sleep-overlay.active {
-    opacity: 1;
-}
+/* Música */
+.progress-container { width: 60%; height: 4px; background: #333; margin: 15px 0; border-radius: 2px; }
+.progress-bar { width: 0%; height: 100%; background: #93f9b9; animation: progress 10s linear infinite; }
+@keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
 
+/* Clima */
+.sun-animation { font-size: 4rem; color: gold; animation: spin 10s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Pasos */
 .steps-ring {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
+    width: 100px; height: 100px;
     border: 5px solid #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    border-top: 5px solid #3a7bd5;
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
 }
+.steps-value { font-size: 1.5rem; font-weight: bold; }
 
-.battery-visual {
-    width: 60px;
-    height: 30px;
-    border: 2px solid #fff;
-}
+/* Batería */
+.battery-visual { width: 60px; height: 30px; border: 2px solid #fff; border-radius: 4px; padding: 2px; margin-bottom: 10px; }
+.battery-level { width: 85%; height: 100%; background: #38ef7d; }
 
-.battery-level {
-    height: 100%;
-    width: 85%;
-    background: #38ef7d;
-}
+/* Ajustes */
+.settings-list { list-style: none; font-size: 0.8rem; width: 70%; text-align: left;}
+.settings-list li { padding: 8px 0; border-bottom: 1px solid #333; }
+
+@keyframes pulse { 50% { opacity: 0.5; } }
