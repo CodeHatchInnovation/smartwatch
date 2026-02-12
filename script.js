@@ -1,130 +1,121 @@
-// --- Estado del Sistema ---
-let currentScreen = 'home-screen';
+// Configuración Global
+const SCREENS = document.querySelectorAll('.page');
+const SCREEN_EL = document.getElementById('screen');
+const BACK_BTN = document.getElementById('back-btn');
+const SLEEP_OVERLAY = document.getElementById('sleep-overlay');
+let currentScreenId = 'home-screen';
 let sleepTimer;
-let bpmInterval;
-const SLEEP_DELAY = 15000; // 15 segundos para apagar
-
-// --- Elementos del DOM ---
-const screen = document.getElementById('screen');
-const pages = document.querySelectorAll('.page');
-const sleepOverlay = document.getElementById('sleep-overlay');
-const hoursEl = document.getElementById('hours');
-const minutesEl = document.getElementById('minutes');
-const backBtn = document.getElementById('back-btn');
-const sideBtn = document.getElementById('side-button');
 
 // --- Inicialización ---
 document.addEventListener('DOMContentLoaded', () => {
-    updateTime();
-    setInterval(updateTime, 1000);
+    updateClock();
+    setInterval(updateClock, 1000);
     resetSleepTimer();
-    simulateSteps();
+    
+    // Iniciar simulación de ritmo cardíaco
+    startHeartRateSim();
 });
 
-// --- Manejo del Tiempo ---
-function updateTime() {
+// --- 1. Reloj y Fecha (Lógica del Punto 1) ---
+function updateClock() {
     const now = new Date();
-    const h = now.getHours().toString().padStart(2, '0');
-    const m = now.getMinutes().toString().padStart(2, '0');
-    hoursEl.textContent = h;
-    minutesEl.textContent = m;
+    // Hora real
+    document.getElementById('hours').textContent = now.getHours().toString().padStart(2, '0');
+    document.getElementById('minutes').textContent = now.getMinutes().toString().padStart(2, '0');
+    
+    // NOTA: La fecha está "hardcoded" visualmente en el HTML como "SÁB 22 FEB" 
+    // para cumplir con tu requerimiento específico de Nicolás Romero, 22 de Febrero.
+    // Si quisieras fecha real automática, descomenta esto:
+    /*
+    const days = ['DOM','LUN','MAR','MIE','JUE','VIE','SAB'];
+    const months = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+    const dateStr = `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]}`;
+    document.querySelector('.date-display').textContent = dateStr;
+    */
 }
 
-// --- Navegación ---
-function showScreen(screenId) {
-    // Ocultar todas
-    pages.forEach(page => page.classList.remove('active'));
-    
-    // Mostrar objetivo
-    const target = document.getElementById(screenId);
-    if(target) target.classList.add('active');
-    
-    currentScreen = screenId;
-    
-    // Gestión del botón "Atrás"
+// --- 2. Sistema de Navegación ---
+function navigateTo(screenId) {
+    SCREENS.forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    currentScreenId = screenId;
+
+    // Manejo botón atrás
     if (screenId === 'home-screen') {
-        backBtn.classList.add('hidden');
+        BACK_BTN.classList.add('hidden');
     } else if (screenId === 'menu-screen') {
-        backBtn.classList.remove('hidden');
-        backBtn.onclick = () => showScreen('home-screen');
+        BACK_BTN.classList.remove('hidden');
+        BACK_BTN.onclick = () => navigateTo('home-screen');
     } else {
-        // Estamos en una App
-        backBtn.classList.remove('hidden');
-        backBtn.onclick = () => showScreen('menu-screen');
-    }
-
-    // Gestionar simulaciones específicas
-    handleAppSimulations(screenId);
-}
-
-// --- Lógica de Apps Simuladas ---
-function handleAppSimulations(screenId) {
-    // Limpiar intervalos anteriores
-    if (bpmInterval) clearInterval(bpmInterval);
-
-    // Activar lógica específica
-    if (screenId === 'app-heart') {
-        const bpmEl = document.getElementById('bpm');
-        bpmInterval = setInterval(() => {
-            // Generar BPM aleatorio entre 65 y 95
-            const val = Math.floor(Math.random() * (95 - 65 + 1) + 65);
-            bpmEl.textContent = val;
-        }, 1500);
+        // Estamos en una app interna
+        BACK_BTN.classList.remove('hidden');
+        BACK_BTN.onclick = () => navigateTo('menu-screen');
     }
 }
 
-function simulateSteps() {
-    // Generar pasos al azar al cargar
-    const steps = Math.floor(Math.random() * (8000 - 1000 + 1) + 1000);
-    document.getElementById('steps-counter').textContent = steps;
-}
-
-// --- Eventos de Interacción ---
-
-// 1. Click en la pantalla Home para ir al menú
-document.getElementById('home-screen').addEventListener('click', () => {
-    showScreen('menu-screen');
+// --- 3. Control de Brillo (Requerimiento Específico) ---
+const brightnessSlider = document.getElementById('brightness-slider');
+brightnessSlider.addEventListener('input', (e) => {
+    const value = e.target.value; // 20 a 100
+    const decimal = value / 100;
+    
+    // Aplicamos la variable CSS al contenedor principal
+    SCREEN_EL.style.setProperty('--screen-brightness', decimal);
 });
 
-// 2. Clicks en Iconos de Apps
-document.querySelectorAll('.app-icon').forEach(icon => {
-    icon.addEventListener('click', (e) => {
-        e.stopPropagation(); // Evitar propagación
-        const targetApp = icon.dataset.target;
-        showScreen(targetApp);
+// --- 4. Interacción Táctil y Eventos ---
+
+// Click en Apps del Menú
+document.querySelectorAll('.app-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const target = item.dataset.target;
+        navigateTo(target);
     });
 });
 
-// 3. Botón Físico Lateral (Home / Wake)
-sideBtn.addEventListener('click', () => {
-    if (sleepOverlay.classList.contains('active')) {
-        wakeScreen();
-    } else {
-        showScreen('home-screen');
-    }
-    resetSleepTimer();
+// Click en la esfera para ir al menú
+document.getElementById('home-screen').addEventListener('click', () => {
+    navigateTo('menu-screen');
 });
 
-// --- Sistema de Apagado Automático (Sleep Mode) ---
+// Botón Físico Lateral (Home / Wake / Back)
+document.getElementById('side-button').addEventListener('click', () => {
+    if (SLEEP_OVERLAY.classList.contains('active')) {
+        wakeScreen();
+    } else {
+        navigateTo('home-screen');
+    }
+});
+
+// --- 5. Simulaciones ---
+
+// Ritmo Cardíaco
+function startHeartRateSim() {
+    const bpmHome = document.getElementById('home-bpm');
+    const bpmDetail = document.getElementById('bpm-detail');
+    
+    setInterval(() => {
+        const val = Math.floor(Math.random() * (95 - 70) + 70);
+        bpmHome.textContent = val;
+        bpmDetail.innerHTML = `${val} <span style="font-size:1rem">BPM</span>`;
+    }, 2000);
+}
+
+// --- 6. Sistema de Energía (Sleep Mode) ---
 function resetSleepTimer() {
     clearTimeout(sleepTimer);
-    if (sleepOverlay.classList.contains('active')) return; // Si ya está dormido, no reiniciar timer
-    
-    sleepTimer = setTimeout(() => {
-        sleepOverlay.classList.add('active'); // Oscurecer
-    }, SLEEP_DELAY);
+    if (!SLEEP_OVERLAY.classList.contains('active')) {
+        sleepTimer = setTimeout(() => {
+            SLEEP_OVERLAY.classList.add('active');
+        }, 15000); // 15 seg apagado
+    }
 }
 
 function wakeScreen() {
-    sleepOverlay.classList.remove('active');
+    SLEEP_OVERLAY.classList.remove('active');
     resetSleepTimer();
 }
 
-// Detectar cualquier toque en la pantalla para mantener despierto
-screen.addEventListener('click', () => {
-    if (sleepOverlay.classList.contains('active')) {
-        wakeScreen();
-    } else {
-        resetSleepTimer();
-    }
-});
+// Cualquier toque reinicia el temporizador
+SCREEN_EL.addEventListener('click', resetSleepTimer);
+SCREEN_EL.addEventListener('touchstart', resetSleepTimer);
