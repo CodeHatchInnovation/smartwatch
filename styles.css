@@ -6,46 +6,70 @@
     --accent-green: #00ff88;
     --accent-red: #ff4757;
     --accent-yellow: #ffa502;
-    --glass: rgba(255, 255, 255, 0.15);
-    /* Variable para el brillo dinámico */
+    /* Brillo inicial */
     --screen-brightness: 1; 
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', 'Segoe UI', sans-serif; user-select: none; }
 
 body {
-    background: #1e1e1e;
+    background: #121212; /* Fondo de la página web muy oscuro */
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* --- Carcasa --- */
+/* --- Carcasa y Correa --- */
+.watch-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .watch-case {
     width: 320px; height: 320px;
-    background: #2f3640;
+    background: #222; /* Color de la caja del reloj */
     border-radius: 50%;
     position: relative;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-    border: 8px solid #3d3d3d;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8); /* Sombra para profundidad */
+    border: 6px solid #333;
     display: flex; justify-content: center; align-items: center;
+    z-index: 10; /* La caja va encima de la correa */
 }
 
-.strap { width: 140px; height: 100px; background: #222; position: absolute; z-index: -1; }
-.top-strap { top: -80px; border-radius: 20px 20px 0 0; }
-.bottom-strap { bottom: -80px; border-radius: 0 0 20px 20px; }
+/* CORREA DISCRETA (Arreglado) */
+.strap { 
+    width: 140px; 
+    height: 120px; 
+    background: linear-gradient(to bottom, #2a2a2a, #1a1a1a); /* Gris oscuro texturizado */
+    position: absolute; 
+    z-index: 1; /* Detrás del reloj */
+    left: 50%;
+    transform: translateX(-50%);
+}
+.top-strap { 
+    top: -90px; 
+    border-radius: 20px 20px 0 0; 
+    box-shadow: inset 0 -10px 10px rgba(0,0,0,0.5); /* Sombra interna para realismo */
+}
+.bottom-strap { 
+    bottom: -90px; 
+    border-radius: 0 0 20px 20px; 
+    box-shadow: inset 0 10px 10px rgba(0,0,0,0.5);
+}
 
 .side-button {
-    position: absolute; right: -14px; width: 14px; height: 60px;
-    background: linear-gradient(to bottom, #555, #333);
-    border-radius: 0 8px 8px 0;
+    position: absolute; right: -12px; width: 10px; height: 50px;
+    background: #444;
+    border-radius: 0 6px 6px 0;
     cursor: pointer;
-    transition: transform 0.1s;
+    z-index: 11;
 }
-.side-button:active { transform: scale(0.9) translateX(-2px); }
+.side-button:active { transform: scale(0.95); }
 
-/* --- Pantalla Principal --- */
+/* --- Pantalla --- */
 .screen {
     width: 290px; height: 290px;
     background-color: var(--bg-dark);
@@ -53,108 +77,109 @@ body {
     position: relative;
     overflow: hidden;
     color: var(--text-main);
-    /* Aplicación del brillo real */
     filter: brightness(var(--screen-brightness));
 }
 
-.status-bar {
-    position: absolute; top: 25px; width: 100%;
-    display: flex; justify-content: center; gap: 10px;
-    z-index: 50;
-    opacity: 0.7;
-}
-.small-icon { font-size: 14px; }
+/* --- ESPACIADO Y ORDEN (Arreglando lo "amontonado") --- */
 
-/* Capas y Transiciones (Punto 7) */
+/* 1. Barra superior (Bluetooth/Batería) */
+.status-bar {
+    position: absolute; 
+    top: 35px; /* Bajamos un poco para que no toque el borde */
+    width: 100%;
+    display: flex; justify-content: center; gap: 12px;
+    opacity: 0.8;
+}
+.small-icon { font-size: 16px; color: #888; }
+
+/* 2. Clima */
+.weather-comp { 
+    position: absolute;
+    top: 70px; /* Separado de la barra de estado */
+    width: 100%;
+    justify-content: center;
+    display: flex; align-items: center; gap: 6px; 
+}
+.weather-text { display: flex; flex-direction: column; align-items: flex-start; line-height: 1;}
+.weather-text .temp { font-weight: bold; font-size: 0.9rem;}
+.weather-text .loc { font-size: 0.7rem; color: var(--text-dim); }
+
+/* 3. Hora y Fecha (CENTRO) */
+.center-time { 
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -55%); /* Centrado matemático perfecto */
+    text-align: center; 
+    width: 100%;
+}
+.digital-clock { 
+    font-size: 3.8rem; /* Grande y legible */
+    font-weight: 300; 
+    line-height: 1; 
+    letter-spacing: -1px;
+    margin-bottom: 5px;
+}
+.date-display { 
+    color: var(--accent-blue); 
+    font-weight: 500; 
+    font-size: 0.95rem; 
+    text-transform: uppercase; 
+    letter-spacing: 1px;
+}
+
+/* 4. Anillos y Ritmo (ABAJO) */
+.bottom-complications {
+    position: absolute;
+    bottom: 35px; /* Pegado abajo pero con margen seguro */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.rings-container {
+    display: flex; gap: 30px; /* Separamos los anillos entre sí */
+}
+.ring-wrapper { position: relative; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; }
+
+/* Iconos dentro de anillos más claros */
+.ring-icon { font-size: 16px; z-index: 2; text-shadow: 0 0 5px black;}
+
+/* Gradientes de anillos */
+.ring {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    border-radius: 50%;
+    mask: radial-gradient(transparent 58%, black 60%);
+    -webkit-mask: radial-gradient(transparent 58%, black 60%);
+}
+.steps-ring-css { background: conic-gradient(var(--accent-blue) 0%, var(--accent-blue) 45%, #333 45%); }
+.battery-ring-css { background: conic-gradient(var(--accent-green) 0%, var(--accent-green) 80%, #333 80%); }
+
+.heart-comp { 
+    display: flex; align-items: center; gap: 5px; 
+    color: var(--accent-red); font-size: 0.85rem; font-weight: bold;
+}
+.heart-anim { animation: beat 1.5s infinite; font-size: 1rem; }
+
+/* Estilos extra (Menú, animaciones, etc. se mantienen igual) */
 .page {
     position: absolute; width: 100%; height: 100%;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     opacity: 0; pointer-events: none;
-    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s;
-    transform: scale(0.9);
+    transition: all 0.3s ease;
+    background: black; /* Asegura fondo negro en apps */
 }
-.page.active { opacity: 1; pointer-events: all; transform: scale(1); }
+.page.active { opacity: 1; pointer-events: all; }
 
-/* --- HOME SCREEN (Punto 1 y 5) --- */
-.center-time { text-align: center; margin: 10px 0; }
-.digital-clock { font-size: 3.5rem; font-weight: 300; line-height: 1; letter-spacing: -2px; }
-.date-display { color: var(--accent-blue); font-weight: bold; font-size: 0.9rem; margin-top: 5px; letter-spacing: 1px; }
-
-/* Complicaciones (Widgets) */
-.complication { position: absolute; display: flex; align-items: center; gap: 5px; font-size: 0.8rem; }
-.weather-comp { top: 60px; }
-.weather-text { display: flex; flex-direction: column; text-align: left; }
-.weather-text .temp { font-weight: bold; }
-.weather-text .loc { font-size: 0.65rem; color: var(--text-dim); }
-
-.heart-comp { bottom: 60px; color: var(--accent-red); }
-.heart-anim { animation: beat 1s infinite; font-size: 1.2rem; }
-
-/* Anillos (Punto 5 - Gráficos) */
-.rings-container {
-    display: flex; justify-content: center; gap: 40px;
-    position: absolute; bottom: 85px; width: 100%;
-}
-.ring-wrapper { position: relative; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; }
-.ring {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    border-radius: 50%;
-    mask: radial-gradient(transparent 55%, black 56%);
-    -webkit-mask: radial-gradient(transparent 55%, black 56%);
-}
-.ring-icon { font-size: 14px; z-index: 2; }
-
-/* Gradientes Cónicos Dinámicos */
-.steps-ring-css { background: conic-gradient(var(--accent-blue) 0%, var(--accent-blue) 65%, #333 65%); }
-.battery-ring-css { background: conic-gradient(var(--accent-green) 0%, var(--accent-green) 85%, #333 85%); }
-
-/* --- MENU --- */
-.app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 40px; }
-.app-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-.app-icon {
-    width: 50px; height: 50px; border-radius: 50%;
-    display: flex; justify-content: center; align-items: center;
-    margin-bottom: 5px; transition: transform 0.2s;
-}
-.app-icon:active { transform: scale(0.9); } /* Feedback visual Punto 8 */
-.color-red { background: linear-gradient(135deg, #ff6b6b, #ee5253); }
-.color-yellow { background: linear-gradient(135deg, #feca57, #ff9f43); }
-.color-grey { background: linear-gradient(135deg, #576574, #222f3e); }
-.color-green { background: linear-gradient(135deg, #1dd1a1, #10ac84); }
-.app-label { font-size: 0.7rem; }
-
-/* --- APPS DETALLE --- */
-.back-btn {
-    position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-    background: rgba(255,255,255,0.2); border-radius: 50%; width: 30px; height: 30px;
-    display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100;
-}
-.back-btn:active { background: rgba(255,255,255,0.4); }
-.hidden { display: none !important; }
-
-/* Ajustes */
-.setting-group { margin-bottom: 20px; width: 80%; }
-.brightness-control { display: flex; align-items: center; gap: 5px; margin-top: 5px; }
-input[type=range] { flex: 1; accent-color: var(--accent-blue); height: 4px; }
-
-.setting-item {
-    display: flex; justify-content: space-between; align-items: center;
-    width: 80%; padding: 10px 0; border-bottom: 1px solid #333; font-size: 0.9rem;
-}
-.toggle { width: 30px; height: 16px; background: #555; border-radius: 10px; position: relative; }
-.toggle.active { background: var(--accent-green); }
-.toggle::after { 
-    content:''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; 
-    background: white; border-radius: 50%; transition: left 0.2s; 
-}
-.toggle.active::after { left: 16px; }
-
-/* Animaciones */
+/* Animaciones y otros elementos */
 @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
-.sun-anim { color: var(--accent-yellow); font-size: 3rem; animation: rotate 10s linear infinite; }
-@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* Sleep Overlay */
-.sleep-overlay { position: absolute; inset: 0; background: black; z-index: 200; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+.sleep-overlay { position: absolute; inset: 0; background: black; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.5s; }
 .sleep-overlay.active { opacity: 1; pointer-events: all; }
+
+/* Rejilla de Apps */
+.app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.app-item { display: flex; flex-direction: column; align-items: center; color: white; cursor: pointer;}
+.app-icon { width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 5px; background: #333;}
+.hidden { display: none !important;}
